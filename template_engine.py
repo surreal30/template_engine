@@ -51,3 +51,28 @@ class _Variable(_Node):
 
     def render(self, context):
         return resolve_in_context(self.name, context)
+
+def compile(self):
+    root = _Root()
+    scope_stack = [root]
+    
+    for fragment in self.each_fragment():
+        if not scope_stack:
+            raise TemplateError('nesting issues')
+
+        parent_scope = scope_stack[-1]
+
+        if fragment.type == CLOSE_BLOCK_FRAGMENT:
+            parent_scope.exit_scope()
+            scope_stack.pop()
+            continue
+
+        new_node = self.create_node(fragment)
+
+        if new_node:
+            parent_scope.children.append(new_node)
+            if new_node.creates_scope:
+                scope_stack.append(new_node)
+                new_node.enter_scope()
+
+    return root
