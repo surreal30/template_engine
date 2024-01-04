@@ -17,7 +17,7 @@ TOK_REGEX = re.compile(r"(%s.*?%s|%s.*?%s)" % (
     BLOCK_TOKEN_END
 ))
 
-class _node(object):
+class _Node(object):
     def __init__(self, fragment=None):
         self.children = []
         self.creates_scope = False
