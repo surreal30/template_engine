@@ -45,3 +45,9 @@ class _Node(object):
 
         return ''.join(map(render_child, children))
 
+class _Variable(_Node):
+    def process_fragment(self, fragment):
+        self.name = fragment
+
+    def render(self, context):
+        return resolve_in_context(self.name, context)
