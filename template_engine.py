@@ -1,4 +1,5 @@
 import re
+import ast
 
 VAR_TOKEN_START = "{{"
 VAR_TOKEN_END = "}}" 
@@ -76,3 +77,21 @@ def compile(self):
                 new_node.enter_scope()
 
     return root
+
+def eval_expression(expr):
+    try:
+        return 'literal', ast.literal_eval(expr)
+    except (ValueError, SyntaxError):
+        return 'name', expr
+
+def resolve(name, context):
+    if name.startswith('..'):
+        context = context.get('..', {})
+        name = name[2:]
+
+    try:
+        for tok in name.split('.'):
+            context = context[tok]
+        return context
+    except KeyError:
+        raise TemplateContextError(name)
